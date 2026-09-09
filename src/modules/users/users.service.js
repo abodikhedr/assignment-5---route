@@ -77,39 +77,3 @@ export const retrieveByPK=async (req, res, next) => {
 
 
 
-// export const getUsers = async (req, res, next) => {
-//     try {
-//         const users = await userModel.findAll({
-//             attributes:{
-//                 include:[["id","u_id"]],
-//                 exclude:"password"
-//             },
-//             where:{
-//                 email:"abodi@gmail.com"
-//             }
-//         })
-//         res.status(200).json({ message: "done", users })
-//     } catch (error) {
-//         res.status(500).json({ error: error.errors[0].message })
-//     }
-// }
-
-// export const createUsers = async (req, res, next) => {
-//     try {
-//         const { name, email, password, role } = req.body
-//         const user = await userModel.findOrCreate({
-//             where:{email},
-//             defaults:{
-//                 name, email, password, role
-//             }
-//         })
-//         user[1]?
-//         res.status(201).json({ message: "user created", data:user[0] })
-//         :
-//         res.status(200).json({ message: "user fetched", data:user[0] })
-
-
-//     } catch (error) {
-//         res.status(500).json({ error: error.errors[0].message })
-//     }
-// }

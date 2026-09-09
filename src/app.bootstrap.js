@@ -13,12 +13,9 @@ const bootstrap = async () => {
     await connectDB(app, port)
     await syncDB()
 
-    app.use('/users',userRouter)
-    app.use('/posts',postRouter)
-    app.use('/comments',commentRouter)
-
-
-
+    app.use("/users",userRouter)
+    app.use("/posts",postRouter)
+    app.use("/comments",commentRouter)
 
 
 

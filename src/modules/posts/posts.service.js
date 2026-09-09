@@ -1,32 +1,75 @@
-import postModel from "../../DB/models/post.model.js"
-
-
+import { sequelize } from "../../DB/connectionDB.js";
+import commentModel from "../../DB/models/comment.model.js";
+import postModel from "../../DB/models/post.model.js";
+import userModel from "../../DB/models/user.model.js";
 
 export const postUser = async (req, res, next) => {
     try {
-        const { title, content, userId } = req.body
-        const data = new postModel({ title, content, userId })
-        await data.save()
-        res.status(201).json({ message: "post created", data })
-
+        const { title, content, userId } = req.body;
+        const data = new postModel({ title, content, userId });
+        await data.save();
+        res.status(201).json({ message: "post created", data });
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({ error: error.message });
     }
-}
+};
 
 export const deletePost = async (req, res, next) => {
     try {
-        const { postId } =req.params
-        const { userId } =req.body
-        const data = await postModel.findByPk(postId)
-        if (data.userId ==userId ) {
-            const deletedData = await postModel.destroy({where:{id:postId}})
-            return res.status(200).json({ message: "post deleted", deletedData })
+        const { postId } = req.params;
+        const { userId } = req.body;
+        const data = await postModel.findByPk(postId);
+        if (data.userId == userId) {
+            const deletedData = await postModel.destroy({
+                where: { id: postId },
+            });
+            return res
+                .status(200)
+                .json({ message: "post deleted", deletedData });
         }
-        res.status(200).json({ message: "access denied (userId doesnt match post)", data })
-
-
+        res.status(200).json({
+            message: "access denied (userId doesnt match post)",
+            data,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({ error: error.message });
     }
-}
+};
+
+export const retrievePosts = async (req, res, next) => {
+    try {
+        const data = await postModel.findAll({
+            attributes: ["id", "title"],
+            include: [
+                {model: userModel},
+                {model: commentModel, attributes: ["id", "content","userId"] },
+            ],
+        });
+        res.status(201).json({ message: "data retrieved", data });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export const commentCount = async (req, res, next) => {
+    try {
+        const data = await postModel.findAll({
+            include: {
+                model: commentModel, as: "comments",attributes:[]
+                
+            },
+            attributes: [
+                    "id",
+                    "content",
+                    [
+                        sequelize.fn("COUNT", sequelize.col("comments.id")),
+                        "comment count",
+                    ],
+                ],
+            group:"id"
+        });
+        res.status(201).json({ message: "data retrieved", data });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
